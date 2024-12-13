@@ -4,21 +4,52 @@ from pickle import load, dump
 
 
 def set_status():
-    pass
+    global game_over, pause
+    if game_over:
+        status_text = "Игра окончена!"
+    elif pause:
+        status_text = "Пауза"
+    else:
+        status_text = "Игра идет"
+    canvas.itemconfig(text_id, text=status_text)
 
 
 def pause_toggle():
-    pass
-
+    global pause
+    pause = not pause
+    set_status()
 
 
 def key_handler(event):
-    pass
+    global x1, y1, x2, y2, game_over
+    if event.keycode == KEY_ESC:
+        window.destroy()
+    elif event.keycode == KEY_PAUSE:
+        pause_toggle()
+    elif not pause and not game_over:
+        if event.keycode == KEY_PLAYER1:  # Для игрока 1
+            canvas.move(player1, SPEED, 0)
+            x1 += SPEED
+        elif event.keycode == KEY_PLAYER2:  # Для игрока 2
+            canvas.move(player2, SPEED, 0)
+            x2 += SPEED
+
+        check_finish()
 
 
 def check_finish():
-    pass
+    global game_over, x1, x2
+    x1_end = canvas.coords(player1)[2]  # Правая граница первого игрока
+    x2_end = canvas.coords(player2)[2]  # Правая граница второго игрока
 
+    if x1_end >= x_finish:
+        canvas.itemconfig(text_id, text="Игрок 1 победил!")
+        game_over = True
+        set_status()
+    elif x2_end >= x_finish:
+        canvas.itemconfig(text_id, text="Игрок 2 победил!")
+        game_over = True
+        set_status()
 
 # область функций
 
@@ -41,9 +72,9 @@ player2_color = 'blue'
 
 x_finish = game_width - 50
 
-KEY_PLAYER1 = 39
-KEY_PLAYER2 = 68
-KEY_PAUSE = 19
+KEY_PLAYER1 = 39 #Правая стрелка
+KEY_PLAYER2 = 68 #D
+KEY_PAUSE = 19 #Pause/Break
 
 SPEED = 12
 
